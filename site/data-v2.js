@@ -1,5 +1,5 @@
 // Dados enriquecidos da versão v2 (remodelada com base nas pesquisas com viajantes,
-// pesquisa com guias de turismo e Boletim ASGUIT 2025).
+// pesquisa com guias de turismo, Boletim ASGUIT 2025 e documentos PNI/PPTU v4).
 // Todos os perfis, avaliações e valores são demonstrativos para fins acadêmicos.
 
 export const CANCELLATION_POLICY = [
@@ -58,22 +58,35 @@ export const PROFILES_V2 = [
   { id: 'Bate-volta econômico', label: 'Bate-volta econômico' }
 ];
 
+export const GUIDE_SPECIALTY_FILTERS = [
+  'Todas',
+  'Enoturismo & Gastronomia',
+  'Natureza & Trilhas',
+  'Cultura & História',
+  'Excursões & Grupos',
+  'Turismo Rural & Família'
+];
+
 export const GUIDES_V2 = {
   'carlos-mendes': {
     id: 'carlos-mendes',
     name: 'Carlos Mendes',
-    role: 'Guia demonstrativo • Enoturismo, Gastronomia e Cultura',
-    shortRole: 'Enoturismo e cultura regional',
-    quote: '“Gosto de apresentar as histórias por trás de cada vinícola e ajustar o ritmo para que o visitante aproveite sem pressa.”',
-    bio: 'Perfil demonstrativo criado para o protótipo acadêmico GuiaSR. Ilustra como um guia profissional apresenta sua experiência, modalidades de atendimento, valores transparentes e avaliações antes da solicitação.',
+    specialtyCategory: 'Enoturismo & Gastronomia',
+    role: 'Especialista em Enoturismo, Vinícolas e Gastronomia Local',
+    shortRole: 'Enoturismo e gastronomia',
+    isTopGuide: true,
+    isPartner: true,
+    partnerLabel: 'Parceiro Oficial GuiaSR',
+    quote: '“Cada vinícola de São Roque tem uma história de família. Conduzo o passeio no seu ritmo, sem pressa e sem filas.”',
+    bio: 'Perfil demonstrativo criado para o protótipo acadêmico GuiaSR. Especializado no Roteiro do Vinho, harmonizações e roteiros personalizados com retirada em hotéis e pousadas.',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
     languages: ['Português', 'Inglês'],
-    area: 'São Roque e circuitos regionais',
+    area: 'Roteiro do Vinho e Centro Histórico',
     experienceYears: '8 anos de atuação (demonstrativo)',
     completedTours: 142,
     rating: 4.9,
     reviewsCount: 38,
-    responseTime: 'Responde em até 6h (demonstrativo)',
+    responseTime: 'Responde em até 4h (demo)',
     credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
     credentialCode: 'DEMO-SP-2025-001',
     hasOwnVehicle: true,
@@ -87,8 +100,8 @@ export const GUIDES_V2 = {
     modalities: ['Tour privativo (carro próprio ou do guia)', 'Pequenos grupos / Vans', 'Excursões (micro e ônibus)'],
     specialties: [
       { icon: 'leaf', title: 'Roteiro do Vinho', description: 'Degustações orientadas e visitas técnicas' },
-      { icon: 'globe', title: 'Cultura e história', description: 'Brasital, Matriz e formação local' },
-      { icon: 'pin', title: 'Gastronomia', description: 'Reservas de almoço e produtores locais' }
+      { icon: 'globe', title: 'Cultura regional', description: 'Histórias da imigração italiana e portuguesa' },
+      { icon: 'pin', title: 'Gastronomia', description: 'Reservas de almoço em restaurantes típicos' }
     ],
     reviews: [
       {
@@ -107,21 +120,70 @@ export const GUIDES_V2 = {
       }
     ]
   },
+  'juliana-prado': {
+    id: 'juliana-prado',
+    name: 'Juliana Prado',
+    specialtyCategory: 'Enoturismo & Gastronomia',
+    role: 'Especialista em Visitas Técnicas, Harmonizações e Roteiros Românticos',
+    shortRole: 'Visitas técnicas e roteiros românticos',
+    isTopGuide: true,
+    isPartner: true,
+    partnerLabel: 'Parceiro Oficial GuiaSR',
+    quote: '“Transformo sua visita às adegas em uma experiência intimista, conectando vinhos autorais, mirantes e boa mesa.”',
+    bio: 'Perfil demonstrativo focado em passeios privativos para casais e pequenos grupos, com forte atuação em visitas técnicas, caves históricas e atendimento trilíngue.',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80',
+    languages: ['Português', 'Inglês', 'Francês'],
+    area: 'Roteiro do Vinho e Hospedagens de São Roque',
+    experienceYears: '5 anos de atuação (demonstrativo)',
+    completedTours: 84,
+    rating: 5.0,
+    reviewsCount: 29,
+    responseTime: 'Responde em até 3h (demo)',
+    credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
+    credentialCode: 'DEMO-SP-2025-004',
+    hasOwnVehicle: true,
+    pricing: {
+      privateCompanionHour: 65,
+      privateDriverHour: 80,
+      privateTypicalTotal: 325,
+      groupHalfDay: 280,
+      groupFullDay: 470
+    },
+    modalities: ['Tour privativo romântico', 'Visitas técnicas em vinícolas', 'Atendimento trilíngue'],
+    specialties: [
+      { icon: 'pin', title: 'Visitas técnicas', description: 'Bastidores de vinificação e caves' },
+      { icon: 'globe', title: 'Trilíngue', description: 'Atendimento a visitantes internacionais' },
+      { icon: 'leaf', title: 'Roteiros para casais', description: 'Pôr do sol, mirantes e harmonização' }
+    ],
+    reviews: [
+      {
+        author: 'Aline & Bruno (demo)',
+        date: 'Out/2025',
+        rating: 5,
+        profile: 'Casal • Tour privativo',
+        comment: 'Experiência impecável! Organizou duas visitas técnicas e o almoço com vista para os vinhedos.'
+      }
+    ]
+  },
   'beatriz-nogueira': {
     id: 'beatriz-nogueira',
     name: 'Beatriz Nogueira',
-    role: 'Guia demonstrativa • Natureza, Trilhas e Turismo Cultural',
-    shortRole: 'Natureza, trilhas e patrimônio',
-    quote: '“São Roque vai muito além da Estrada do Vinho: temos mata atlântica, mirantes e casarões cheios de memória.”',
-    bio: 'Perfil demonstrativo criado para mostrar diversidade de especialidades e idiomas no GuiaSR. Focada em passeios ao ar livre, turismo histórico-cultural e atendimento a famílias e visitantes internacionais.',
+    specialtyCategory: 'Natureza & Trilhas',
+    role: 'Especialista em Ecoturismo, Morro do Saboó e Mata da Câmara',
+    shortRole: 'Natureza, trilhas e ecoturismo',
+    isTopGuide: true,
+    isPartner: false,
+    partnerLabel: '',
+    quote: '“São Roque vai muito além das vinícolas: temos Mata Atlântica preservada, mirantes 360° e trilhas para todos os ritmos.”',
+    bio: 'Perfil demonstrativo voltado a ecoturismo, trilhas monitoradas no Morro do Saboó e Mata da Câmara, além de caminhadas interpretativas e atendimento bilíngue.',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
     languages: ['Português', 'Inglês', 'Espanhol'],
-    area: 'Centro Histórico, Saboó e Mata da Câmara',
+    area: 'Rota Saboó & Castello e Mata da Câmara',
     experienceYears: '6 anos de atuação (demonstrativo)',
     completedTours: 96,
-    rating: 4.8,
+    rating: 4.9,
     reviewsCount: 24,
-    responseTime: 'Responde em até 4h (demonstrativo)',
+    responseTime: 'Responde em até 4h (demo)',
     credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
     credentialCode: 'DEMO-SP-2025-002',
     hasOwnVehicle: false,
@@ -132,26 +194,154 @@ export const GUIDES_V2 = {
       groupHalfDay: 240,
       groupFullDay: 420
     },
-    modalities: ['Tour privativo (no carro do visitante ou a pé)', 'Pequenos grupos / Vans', 'Atendimento bilíngue'],
+    modalities: ['Tour privativo (no carro do visitante ou a pé)', 'Pequenos grupos de trilha', 'Atendimento bilíngue'],
     specialties: [
-      { icon: 'leaf', title: 'Ecoturismo e trilhas', description: 'Morro do Saboó e Mata da Câmara' },
+      { icon: 'leaf', title: 'Trilhas e mirantes', description: 'Morro do Saboó e Mata da Câmara' },
       { icon: 'globe', title: 'Atendimento bilíngue', description: 'Inglês e espanhol para visitantes' },
-      { icon: 'pin', title: 'Patrimônio histórico', description: 'Centro Histórico e Sítio Santo Antônio' }
+      { icon: 'pin', title: 'Educação ambiental', description: 'Flora, fauna e fotografia de natureza' }
     ],
     reviews: [
       {
-        author: 'Camila R. (demo)',
+        author: 'Lucas P. (demo)',
+        date: 'Ago/2025',
+        rating: 4.9,
+        profile: 'Amigos • Trilha Saboó',
+        comment: 'Pontualidade impecável e ótimo planejamento de horários para evitar sol forte na subida.'
+      }
+    ]
+  },
+  'rafael-tavares': {
+    id: 'rafael-tavares',
+    name: 'Rafael Tavares',
+    specialtyCategory: 'Excursões & Grupos',
+    role: 'Especialista em Excursões, Vans e Logística de Período Integral',
+    shortRole: 'Excursões, vans e grupos',
+    isTopGuide: false,
+    isPartner: true,
+    partnerLabel: 'Parceiro Oficial GuiaSR',
+    quote: '“Recepciono sua van ou ônibus direto no Portal Guaçu e coordeno café, vinícolas e almoço sem atrasos.”',
+    bio: 'Perfil demonstrativo com ampla experiência em turismo receptivo de grupos organizados (vans, micro-ônibus e ônibus), reservas em restaurantes e cronogramas de 8 horas.',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
+    languages: ['Português'],
+    area: 'Toda São Roque e circuitos combinados',
+    experienceYears: '10 anos de atuação (demonstrativo)',
+    completedTours: 210,
+    rating: 4.8,
+    reviewsCount: 41,
+    responseTime: 'Responde em até 5h (demo)',
+    credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
+    credentialCode: 'DEMO-SP-2025-003',
+    hasOwnVehicle: false,
+    pricing: {
+      privateCompanionHour: 60,
+      privateDriverHour: 75,
+      privateTypicalTotal: 300,
+      groupHalfDay: 250,
+      groupFullDay: 440
+    },
+    modalities: ['Excursões de ônibus e micro-ônibus', 'Grupos em van', 'Roteiros combinados de 8h'],
+    specialties: [
+      { icon: 'users', title: 'Gestão de grupos', description: 'Coordenação de até 45 participantes' },
+      { icon: 'clock', title: 'Pontualidade', description: 'Recepção na Castello Branco e Raposo' },
+      { icon: 'pin', title: 'Gastronomia p/ grupos', description: 'Café da manhã e almoço com reserva' }
+    ],
+    reviews: [
+      {
+        author: 'Agência Litoral (demo)',
+        date: 'Jul/2025',
+        rating: 4.9,
+        profile: 'Excursão • 32 pessoas',
+        comment: 'Excelente controle de horários no domingo de inverno. O grupo aproveitou tudo sem estresse.'
+      }
+    ]
+  },
+  'camila-ferraz': {
+    id: 'camila-ferraz',
+    name: 'Camila Ferraz',
+    specialtyCategory: 'Cultura & História',
+    role: 'Especialista em Centro Histórico, Brasital e Roteiros Acessíveis',
+    shortRole: 'História, Brasital e acessibilidade',
+    isTopGuide: true,
+    isPartner: false,
+    partnerLabel: '',
+    quote: '“Contar a história da Brasital, da Matriz e da ferrovia em ritmo acessível faz toda família se encantar por São Roque.”',
+    bio: 'Perfil demonstrativo especializado em patrimônio histórico-cultural, turismo acessível para idosos e crianças, e roteiros econômicos de bate-volta.',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+    languages: ['Português', 'Inglês'],
+    area: 'Centro Histórico, Brasital e Sítio Santo Antônio',
+    experienceYears: '4 anos de atuação (demonstrativo)',
+    completedTours: 63,
+    rating: 4.9,
+    reviewsCount: 18,
+    responseTime: 'Responde em até 3h (demo)',
+    credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
+    credentialCode: 'DEMO-SP-2025-005',
+    hasOwnVehicle: false,
+    pricing: {
+      privateCompanionHour: 60,
+      privateDriverHour: 75,
+      privateTypicalTotal: 180,
+      groupHalfDay: 220,
+      groupFullDay: 400
+    },
+    modalities: ['Caminhada cultural acessível', 'Tour privativo familiar', 'Bate-volta econômico'],
+    specialties: [
+      { icon: 'globe', title: 'Patrimônio histórico', description: 'Brasital, Matriz e Estação Ferroviária' },
+      { icon: 'users', title: 'Acessibilidade', description: 'Percursos planos adaptados para famílias' },
+      { icon: 'pin', title: 'Curiosidades locais', description: 'Narrativa envolvente e didática' }
+    ],
+    reviews: [
+      {
+        author: 'Patrícia A. (demo)',
         date: 'Out/2025',
         rating: 5,
         profile: 'Família • Centro Histórico',
         comment: 'Roteiro super acessível para minha mãe. Curiosidades locais incríveis sobre a Brasital.'
-      },
+      }
+    ]
+  },
+  'marcos-rezende': {
+    id: 'marcos-rezende',
+    name: 'Marcos Rezende',
+    specialtyCategory: 'Turismo Rural & Família',
+    role: 'Especialista em Turismo Rural, Alcachofras e Circuito Darcy Penteado',
+    shortRole: 'Turismo rural, alcachofras e famílias',
+    isTopGuide: false,
+    isPartner: true,
+    partnerLabel: 'Parceiro Oficial GuiaSR',
+    quote: '“Levo famílias para conhecer produtores locais, apiários e a autêntica cozinha da roça longe da lotação.”',
+    bio: 'Perfil demonstrativo voltado a experiências rurais nos circuitos Raposo e Darcy Penteado, ideal para famílias que buscam tranquilidade mesmo aos fins de semana.',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+    languages: ['Português', 'Espanhol'],
+    area: 'Circuitos Raposo, Darcy Penteado e Zona Rural',
+    experienceYears: '9 anos de atuação (demonstrativo)',
+    completedTours: 118,
+    rating: 4.8,
+    reviewsCount: 27,
+    responseTime: 'Responde em até 6h (demo)',
+    credentialStatus: 'Cadastur demonstrativo (não verificado neste protótipo)',
+    credentialCode: 'DEMO-SP-2025-006',
+    hasOwnVehicle: true,
+    pricing: {
+      privateCompanionHour: 60,
+      privateDriverHour: 75,
+      privateTypicalTotal: 270,
+      groupHalfDay: 250,
+      groupFullDay: 430
+    },
+    modalities: ['Tour rural privativo', 'Passeios em família', 'Guia motorista'],
+    specialties: [
+      { icon: 'leaf', title: 'Agricultura familiar', description: 'Alcachofras, mel e produtores locais' },
+      { icon: 'pin', title: 'Sítio Santo Antônio', description: 'História bandeirista e arquitetura' },
+      { icon: 'users', title: 'Roteiros sem filas', description: 'Alternativas tranquilas nos fins de semana' }
+    ],
+    reviews: [
       {
-        author: 'Lucas P. (demo)',
-        date: 'Ago/2025',
-        rating: 4.8,
-        profile: 'Amigos • Trilha Saboó',
-        comment: 'Pontualidade impecável e ótimo planejamento de horários para evitar sol forte na subida.'
+        author: 'Helena C. (demo)',
+        date: 'Out/2025',
+        rating: 5,
+        profile: 'Família • Circuito Rural',
+        comment: 'Fugimos do trânsito do domingo e conhecemos lugares autênticos com calma.'
       }
     ]
   }
@@ -172,9 +362,10 @@ export const ROUTES_V2 = [
     durationBucket: 'medium',
     experienceType: 'Privativo',
     modalitiesSupported: ['Privativo', 'Grupo / Excursão'],
-    language: 'Português / Inglês',
+    language: 'Português / Inglês / Francês',
     featured: true,
     guideId: 'carlos-mendes',
+    guideIds: ['carlos-mendes', 'juliana-prado', 'rafael-tavares'],
     rating: 4.9,
     reviewsCount: 31,
     priceFrom: 300,
@@ -230,7 +421,8 @@ export const ROUTES_V2 = [
     modalitiesSupported: ['Privativo', 'Pequenos grupos'],
     language: 'Português / Inglês / Espanhol',
     featured: true,
-    guideId: 'beatriz-nogueira',
+    guideId: 'camila-ferraz',
+    guideIds: ['camila-ferraz', 'carlos-mendes', 'beatriz-nogueira'],
     rating: 4.9,
     reviewsCount: 19,
     priceFrom: 180,
@@ -286,6 +478,7 @@ export const ROUTES_V2 = [
     language: 'Português / Inglês',
     featured: true,
     guideId: 'beatriz-nogueira',
+    guideIds: ['beatriz-nogueira', 'camila-ferraz', 'marcos-rezende'],
     rating: 4.8,
     reviewsCount: 22,
     priceFrom: 180,
@@ -339,11 +532,12 @@ export const ROUTES_V2 = [
     modalitiesSupported: ['Grupo / Excursão'],
     language: 'Português',
     featured: false,
-    guideId: 'carlos-mendes',
+    guideId: 'rafael-tavares',
+    guideIds: ['rafael-tavares', 'carlos-mendes', 'marcos-rezende'],
     rating: 4.9,
     reviewsCount: 27,
-    priceFrom: 450,
-    priceNote: 'R$ 450 diária integral de guia (8h) • ideal para vans, micro-ônibus e ônibus',
+    priceFrom: 440,
+    priceNote: 'a partir de R$ 440 diária integral (8h) • ideal para vans, micro-ônibus e ônibus',
     effort: 'Leve',
     accessible: true,
     accessibilityNote: 'Paradas selecionadas com estrutura para embarque/desembarque de grupos e banheiros acessíveis.',
@@ -395,6 +589,7 @@ export const ROUTES_V2 = [
     language: 'Português / Inglês',
     featured: false,
     guideId: 'beatriz-nogueira',
+    guideIds: ['beatriz-nogueira', 'marcos-rezende', 'carlos-mendes'],
     rating: 4.8,
     reviewsCount: 16,
     priceFrom: 240,
@@ -446,9 +641,10 @@ export const ROUTES_V2 = [
     durationBucket: 'medium',
     experienceType: 'Privativo',
     modalitiesSupported: ['Privativo', 'Pequenos grupos'],
-    language: 'Português',
+    language: 'Português / Espanhol',
     featured: false,
-    guideId: 'carlos-mendes',
+    guideId: 'marcos-rezende',
+    guideIds: ['marcos-rezende', 'juliana-prado', 'camila-ferraz'],
     rating: 4.9,
     reviewsCount: 14,
     priceFrom: 270,

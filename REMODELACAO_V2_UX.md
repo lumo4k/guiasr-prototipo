@@ -92,13 +92,20 @@ Todas as mudanças implementadas na versão **v2** foram fundamentadas diretamen
 ### Tela 03 — Detalhes do Roteiro
 - **Alterações:**
   1. Banner exibe circuito, nota de avaliação, badge de acessibilidade e preço inicial.
-  2. Três cartões informativos de decisão rápida: **Transporte e encontro**, **Acessibilidade** e **Movimento/melhor horário**.
+  2. Três cartões informativos de decisão rápida: **Transporte e encontro**, **Esforço físico e acessibilidade** e **Movimento/melhor horário**.
   3. Bloco de **Curiosidade local** e lista detalhada de **Locais visitados com horários de funcionamento**.
   4. Quadro explícito de **O que está incluído vs. Não incluído** (transparência financeira).
   5. Seção de **Avaliações ilustrativas** de viajantes.
-  6. Card lateral diferencia claramente a contratação de guia presencial do uso gratuito do roteiro digital autoguiado.
+  6. Card lateral remodelado com **múltiplos guias especializados selecionáveis** para o roteiro (cada um com especialidade, avaliação `★` e badges **`★ Top Guia`** / **`✓ Parceiro`**), nova copy mais clara, atalho para a galeria completa de guias e separação nítida do uso gratuito do roteiro digital autoguiado.
 
-### Tela 04 — Perfil do Guia
+### Tela 04 — Galeria de Guias Credenciados (`#/guias` — Nova tela na v2)
+- **Alterações:**
+  1. Nova tela dedicada exibindo **6 guias demonstrativos** com especialidades distintas (*Enoturismo & Gastronomia*, *Visitas Técnicas & Romântico*, *Natureza & Trilhas*, *Excursões & Grupos*, *Cultura, História & Acessibilidade* e *Turismo Rural & Família*).
+  2. Badges visuais de destaque: **`★ Top Guia`** (melhores avaliações da plataforma) e **`✓ Parceiro Oficial GuiaSR`** (parceiros do site), além do selo `Cadastur (demo)`.
+  3. Busca por nome/especialidade/idioma e filtros rápidos por selo (`Todos`, `Top Guia`, `Parceiro Oficial GuiaSR`) e por especialidade.
+  4. Cards com avaliação, quantidade de passeios, idiomas, preço a partir de `R$/h` e botões diretos para **Ver perfil** ou **Ver agenda**.
+
+### Tela 05 — Perfil do Guia (`#/guias/:id`)
 - **Alterações:**
   1. Adição de segundo guia demonstrativo (`Beatriz Nogueira`, trilhas/cultura/bilíngue PT-EN-ES) com seletor rápido entre guias, refletindo diversidade de oferta e os 6% de turistas internacionais nos privativos (ASGUIT p. 47).
   2. Destaque de **avaliações**, **histórico de atendimentos registrados (demo)**, **tempo de resposta** e **selo explicativo de Cadastur** (mantendo honestidade de que no protótipo é demonstrativo).

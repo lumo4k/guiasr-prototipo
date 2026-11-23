@@ -22,6 +22,18 @@ const SCREENS = [
   { id: 8, key: 'enviada', name: 'Enviada', hash: '#/solicitacao/enviada', wireframe: '../baixa_fidelidade/08_enviada.jpg', desc: 'Status pendente e próximos passos' }
 ];
 
+const SCREENS_V2 = [
+  { id: 1, key: 'inicio', name: 'Início', hash: '#/' },
+  { id: 2, key: 'explorar', name: 'Explorar', hash: '#/roteiros' },
+  { id: 3, key: 'roteiro', name: 'Roteiro', hash: '#/roteiros/sabores-da-rota-do-vinho' },
+  { id: 4, key: 'guias-galeria', name: 'Guias Credenciados', hash: '#/guias' },
+  { id: 5, key: 'guia', name: 'Perfil do Guia', hash: '#/guias/carlos-mendes' },
+  { id: 6, key: 'data', name: 'Data e Local', hash: '#/solicitacao/data' },
+  { id: 7, key: 'acesso', name: 'Acesso', hash: '#/acesso' },
+  { id: 8, key: 'revisao', name: 'Revisão', hash: '#/solicitacao/revisao' },
+  { id: 9, key: 'enviada', name: 'Enviada', hash: '#/solicitacao/enviada' }
+];
+
 const state = {
   version: 'v2', // 'v1' (original) | 'v2' (remodelada com base em pesquisas)
   viewMode: 'hifi', // 'wireframe' | 'hifi' | 'flow'
@@ -43,6 +55,11 @@ const state = {
       modality: 'all',
       accessibleOnly: false,
       sort: 'relevant'
+    },
+    guideFilters: {
+      query: '',
+      specialty: 'Todas',
+      badge: 'all' // 'all' | 'top' | 'partner'
     },
     modality: 'private', // 'private' | 'group'
     privateHours: 5,
@@ -136,8 +153,24 @@ function getRouteInfo() {
   return path;
 }
 
+function getActiveScreens() {
+  return state.version === 'v2' ? SCREENS_V2 : SCREENS;
+}
+
 function getCurrentScreenIndex() {
   const path = getRouteInfo();
+  if (state.version === 'v2') {
+    if (path === '/' || path === '') return 0;
+    if (path === '/roteiros') return 1;
+    if (path.startsWith('/roteiros/')) return 2;
+    if (path === '/guias') return 3;
+    if (path.startsWith('/guias/')) return 4;
+    if (path === '/solicitacao/data') return 5;
+    if (path === '/acesso') return 6;
+    if (path === '/solicitacao/revisao') return 7;
+    if (path === '/solicitacao/enviada') return 8;
+    return 0;
+  }
   if (path === '/' || path === '') return 0;
   if (path === '/roteiros') return 1;
   if (path.startsWith('/roteiros/')) return 2;
@@ -150,6 +183,7 @@ function getCurrentScreenIndex() {
 }
 
 function renderProtoBar() {
+  const screens = getActiveScreens();
   const idx = getCurrentScreenIndex();
   const isFlow = state.viewMode === 'flow';
   return `
@@ -178,8 +212,8 @@ function renderProtoBar() {
 
         <div class="proto-pager">
           <button type="button" class="proto-pager-btn" id="protoPrevBtn" ${isFlow || idx === 0 ? 'disabled' : ''} aria-label="Tela anterior">${icons.chevronLeft}</button>
-          <span>${isFlow ? 'Fluxo' : `${idx + 1} / ${SCREENS.length}`}</span>
-          <button type="button" class="proto-pager-btn" id="protoNextBtn" ${isFlow || idx === SCREENS.length - 1 ? 'disabled' : ''} aria-label="Próxima tela">${icons.chevronRight}</button>
+          <span>${isFlow ? 'Fluxo' : `${idx + 1} / ${screens.length}`}</span>
+          <button type="button" class="proto-pager-btn" id="protoNextBtn" ${isFlow || idx === screens.length - 1 ? 'disabled' : ''} aria-label="Próxima tela">${icons.chevronRight}</button>
         </div>
       </div>
     </div>
@@ -1158,13 +1192,15 @@ function bindEvents() {
   });
 
   document.getElementById('protoPrevBtn')?.addEventListener('click', () => {
+    const screens = getActiveScreens();
     const idx = getCurrentScreenIndex();
-    if (idx > 0) navigate(SCREENS[idx - 1].hash);
+    if (idx > 0) navigate(screens[idx - 1].hash);
   });
 
   document.getElementById('protoNextBtn')?.addEventListener('click', () => {
+    const screens = getActiveScreens();
     const idx = getCurrentScreenIndex();
-    if (idx < SCREENS.length - 1) navigate(SCREENS[idx + 1].hash);
+    if (idx < screens.length - 1) navigate(screens[idx + 1].hash);
   });
 
   document.querySelectorAll('[data-jump-screen]').forEach((btn) => {
@@ -1384,7 +1420,8 @@ function getV2Context() {
 function render() {
   const path = getRouteInfo();
   const app = document.getElementById('app');
-  const screen = SCREENS[getCurrentScreenIndex()];
+  const screens = getActiveScreens();
+  const screen = screens[getCurrentScreenIndex()];
   let html = '';
 
   if (state.version === 'v2') {

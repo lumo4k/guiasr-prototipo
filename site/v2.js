@@ -3,6 +3,7 @@ import {
   GUIDES_V2,
   CIRCUITS_V2,
   PROFILES_V2,
+  GUIDE_SPECIALTY_FILTERS,
   MEETING_POINTS,
   CANCELLATION_POLICY
 } from './data-v2.js';
@@ -30,6 +31,13 @@ function renderStars(rating) {
   return `<span class="v2-rating-badge" aria-label="Avaliação ${rating} de 5">★ ${rating.toFixed(1)}</span>`;
 }
 
+function renderGuideBadges(guide) {
+  return `
+    ${guide.isTopGuide ? `<span class="v2-badge-top" title="Entre os guias mais bem avaliados da plataforma">★ Top Guia</span>` : ''}
+    ${guide.isPartner ? `<span class="v2-badge-partner" title="Guia parceiro oficial do GuiaSR">✓ Parceiro GuiaSR</span>` : ''}
+  `;
+}
+
 function renderHeaderV2(ctx, activeSection) {
   const { state, icons } = ctx;
   const userLabel = state.user ? state.user.name.split(' ')[0] : 'Entrar';
@@ -44,7 +52,7 @@ function renderHeaderV2(ctx, activeSection) {
         <nav class="nav-links" aria-label="Navegação principal">
           <a href="#/" class="nav-link ${activeSection === 'home' ? 'is-active' : ''}">Início</a>
           <a href="#/roteiros" class="nav-link ${activeSection === 'explore' ? 'is-active' : ''}">Explorar roteiros</a>
-          <a href="#/guias/${state.selectedGuideId}" class="nav-link ${activeSection === 'guides' ? 'is-active' : ''}">Guias credenciados</a>
+          <a href="#/guias" class="nav-link ${activeSection === 'guides' ? 'is-active' : ''}">Guias credenciados</a>
         </nav>
 
         <div class="header-actions">
@@ -61,7 +69,7 @@ function renderHeaderV2(ctx, activeSection) {
         <div class="mobile-nav-list">
           <a href="#/" class="mobile-nav-link ${activeSection === 'home' ? 'is-active' : ''}">Início</a>
           <a href="#/roteiros" class="mobile-nav-link ${activeSection === 'explore' ? 'is-active' : ''}">Explorar roteiros</a>
-          <a href="#/guias/${state.selectedGuideId}" class="mobile-nav-link ${activeSection === 'guides' ? 'is-active' : ''}">Guias credenciados</a>
+          <a href="#/guias" class="mobile-nav-link ${activeSection === 'guides' ? 'is-active' : ''}">Guias credenciados</a>
           <a href="#/acesso" class="mobile-nav-link">${userLabel}</a>
         </div>
       </div>
@@ -230,7 +238,7 @@ function renderHomeV2(ctx) {
                 <li>${icons.check} Apoio em reservas de almoço e visitas técnicas</li>
                 <li>${icons.check} Preço transparente e política de cancelamento clara</li>
               </ul>
-              <a href="#/guias/carlos-mendes" class="btn-primary">Conhecer guias credenciados ${icons.arrowRight}</a>
+              <a href="#/guias" class="btn-primary">Explorar guias credenciados ${icons.arrowRight}</a>
             </div>
           </div>
         </div>
@@ -449,8 +457,12 @@ function renderRouteDetailV2(ctx, slug) {
   const { state, icons } = ctx;
   const route = ROUTES_V2.find((r) => r.slug === slug) || ROUTES_V2[0];
   state.selectedRouteSlug = route.slug;
-  state.selectedGuideId = route.guideId;
-  const guide = GUIDES_V2[route.guideId] || GUIDES_V2['carlos-mendes'];
+  const routeGuideIds = route.guideIds && route.guideIds.length ? route.guideIds : [route.guideId];
+  if (!routeGuideIds.includes(state.selectedGuideId)) {
+    state.selectedGuideId = routeGuideIds[0];
+  }
+  const routeGuides = routeGuideIds.map((id) => GUIDES_V2[id]).filter(Boolean);
+  const guide = GUIDES_V2[state.selectedGuideId] || routeGuides[0] || GUIDES_V2['carlos-mendes'];
 
   return `
     ${renderHeaderV2(ctx, 'explore')}
@@ -577,35 +589,57 @@ function renderRouteDetailV2(ctx, slug) {
             </div>
           </div>
 
-          <!-- Card lateral com escolha clara entre Roteiro Digital e Guia Profissional -->
+          <!-- Card lateral remodelado: múltiplos guias especializados + nova copy -->
           <aside class="sticky-card reveal">
-            <span class="eyebrow">Como você prefere fazer?</span>
+            <span class="eyebrow">Acompanhamento profissional</span>
             <div class="v2-price-banner">
-              <small>Acompanhamento com guia a partir de</small>
-              <div class="price-value">R$ ${route.priceFrom}</div>
-              <p class="v2-price-note">${route.priceNote}</p>
+              <small>Guiamento privativo a partir de</small>
+              <div class="price-value">R$ ${guide.pricing.privateTypicalTotal}</div>
+              <p class="v2-price-note">R$ ${guide.pricing.privateCompanionHour}/h acompanhante • roteiro digital gratuito (demo)</p>
             </div>
 
-            <div class="guide-mini-head">
-              <img src="${guide.avatar}" alt="${guide.name}" class="guide-avatar-sm" />
-              <div>
-                <div class="guide-mini-name">${guide.name}</div>
-                <div class="guide-mini-role">★ ${guide.rating.toFixed(1)} (${guide.reviewsCount}) • ${guide.shortRole}</div>
-              </div>
+            <div class="v2-route-guides-head">
+              <strong>Escolha o guia ideal para este roteiro</strong>
+              <small>${routeGuides.length} especialistas disponíveis</small>
             </div>
-            <p class="guide-quote">${guide.quote}</p>
+
+            <div class="v2-route-guides-list" role="radiogroup" aria-label="Guias disponíveis para este roteiro">
+              ${routeGuides.map((g) => {
+                const isSelected = g.id === guide.id;
+                return `
+                  <button type="button" class="v2-route-guide-option ${isSelected ? 'is-selected' : ''}" data-v2-pick-guide="${g.id}" aria-pressed="${isSelected ? 'true' : 'false'}">
+                    <img src="${g.avatar}" alt="${g.name}" class="v2-rg-avatar" />
+                    <div class="v2-rg-info">
+                      <div class="v2-rg-top">
+                        <strong>${g.name}</strong>
+                        <span class="v2-rg-rating">★ ${g.rating.toFixed(1)}</span>
+                      </div>
+                      <span class="v2-rg-spec">${g.shortRole}</span>
+                      <div class="v2-rg-badges">
+                        ${g.isTopGuide ? `<span class="v2-badge-top v2-badge--xs">★ Top Guia</span>` : ''}
+                        ${g.isPartner ? `<span class="v2-badge-partner v2-badge--xs">✓ Parceiro</span>` : ''}
+                      </div>
+                    </div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <p class="guide-quote" style="margin-top: 14px;">${guide.quote}</p>
 
             <div class="demo-note-row">
               ${icons.shield}
-              <span><strong>Cadastur:</strong> guias passam por validação de registro. Neste protótipo acadêmico, os dados são demonstrativos.</span>
+              <span><strong>Credenciamento Cadastur:</strong> todos os perfis reais passam por validação oficial. Dados ilustrativos neste protótipo.</span>
             </div>
 
-            <a href="#/guias/${guide.id}" class="btn-primary btn-full">Contratar com guia profissional ${icons.arrowRight}</a>
-            <a href="#/solicitacao/data" class="btn-outline btn-full" style="margin-top: 10px;">Ver datas e simular valor ${icons.calendar}</a>
+            <a href="#/guias/${guide.id}" class="btn-primary btn-full">Ver perfil de ${guide.name.split(' ')[0]} ${icons.arrowRight}</a>
+            <a href="#/solicitacao/data" class="btn-outline btn-full" style="margin-top: 10px;">Agendar com ${guide.name.split(' ')[0]} ${icons.calendar}</a>
+
+            <a href="#/guias" class="card-link" style="margin-top: 14px; font-size: 0.84rem;">Ver todos os ${Object.keys(GUIDES_V2).length} guias credenciados ${icons.arrowRight}</a>
 
             <div class="v2-digital-note">
-              <strong>Prefere ir sem guia?</strong>
-              <p>Você pode consultar todas as paradas, horários e curiosidades acima gratuitamente como roteiro digital autoguiado.</p>
+              <strong>Prefere explorar no seu ritmo?</strong>
+              <p>Use gratuitamente todas as paradas, horários de funcionamento e curiosidades acima como roteiro digital autoguiado.</p>
             </div>
           </aside>
         </div>
@@ -616,25 +650,145 @@ function renderRouteDetailV2(ctx, slug) {
 }
 
 // =========================================
-// TELA 04 — PERFIL DO GUIA (v2)
+// TELA 04 — GALERIA DE GUIAS CREDENCIADOS (v2)
+// =========================================
+function getFilteredGuidesV2(state) {
+  const gf = state.v2.guideFilters;
+  const q = (gf.query || '').trim().toLowerCase();
+  return Object.values(GUIDES_V2).filter((g) => {
+    if (gf.specialty !== 'Todas' && g.specialtyCategory !== gf.specialty) return false;
+    if (gf.badge === 'top' && !g.isTopGuide) return false;
+    if (gf.badge === 'partner' && !g.isPartner) return false;
+    if (q) {
+      const hay = `${g.name} ${g.role} ${g.shortRole} ${g.specialtyCategory} ${g.area} ${g.languages.join(' ')}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a, b) => b.rating - a.rating || b.reviewsCount - a.reviewsCount);
+}
+
+function renderGuidesGalleryV2(ctx) {
+  const { state, icons } = ctx;
+  const gf = state.v2.guideFilters;
+  const filtered = getFilteredGuidesV2(state);
+
+  return `
+    ${renderHeaderV2(ctx, 'guides')}
+    <main class="page-main">
+      <div class="container">
+        <div class="back-bar">
+          <a href="#/" class="back-link">${icons.chevronLeft} Voltar ao início</a>
+        </div>
+
+        <div class="page-hero-centered reveal">
+          <span class="eyebrow">Guias credenciados em São Roque</span>
+          <h1>Encontre o especialista ideal para o seu passeio</h1>
+          <p>Compare especialidades, avaliações, idiomas e valores transparentes. Cada profissional atua com autonomia e registro Cadastur (dados demonstrativos).</p>
+          <div class="explore-search-wrap">
+            <form class="search-bar" id="v2GuideSearchForm">
+              <span class="search-bar-icon">${icons.search}</span>
+              <input type="text" id="v2GuideSearchInput" placeholder="Busque por nome, vinícolas, trilhas, excursões ou idioma..." value="${gf.query}" aria-label="Buscar guias" />
+              <button type="submit" class="btn-primary">Buscar</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Filtros rápidos de selos e especialidades -->
+        <div class="v2-gallery-toolbar reveal">
+          <div class="v2-badge-filter-row" role="group" aria-label="Filtrar por destaque">
+            <button type="button" class="v2-filter-pill ${gf.badge === 'all' ? 'is-active' : ''}" data-v2-guide-badge="all">Todos (${Object.keys(GUIDES_V2).length})</button>
+            <button type="button" class="v2-filter-pill v2-filter-pill--top ${gf.badge === 'top' ? 'is-active' : ''}" data-v2-guide-badge="top">★ Top Guia (melhores estrelas)</button>
+            <button type="button" class="v2-filter-pill v2-filter-pill--partner ${gf.badge === 'partner' ? 'is-active' : ''}" data-v2-guide-badge="partner">✓ Parceiro Oficial GuiaSR</button>
+          </div>
+
+          <div class="v2-spec-filter-row" role="group" aria-label="Filtrar por especialidade">
+            ${GUIDE_SPECIALTY_FILTERS.map((sp) => `
+              <button type="button" class="v2-spec-chip ${gf.specialty === sp ? 'is-active' : ''}" data-v2-guide-spec="${sp}">${sp}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <p class="results-count" style="margin-bottom: 18px;">
+          <strong>${filtered.length}</strong> ${filtered.length === 1 ? 'guia encontrado' : 'guias encontrados'} em São Roque
+        </p>
+
+        ${filtered.length > 0 ? `
+          <div class="v2-guides-gallery-grid">
+            ${filtered.map((g) => `
+              <article class="v2-guide-gallery-card reveal">
+                <div class="v2-gg-header">
+                  <img src="${g.avatar}" alt="${g.name}" class="v2-gg-avatar" loading="lazy" />
+                  <div class="v2-gg-head-info">
+                    <div class="v2-gg-badges">
+                      ${renderGuideBadges(g)}
+                    </div>
+                    <h2>${g.name}</h2>
+                    <span class="v2-gg-spec">${g.specialtyCategory}</span>
+                    <div class="v2-gg-rating-row">
+                      <strong>★ ${g.rating.toFixed(1)}</strong>
+                      <span>(${g.reviewsCount} avaliações demo)</span>
+                      <span>• ${g.completedTours} passeios</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="v2-gg-role">${g.role}</p>
+                <p class="v2-gg-quote">${g.quote}</p>
+
+                <div class="v2-gg-chips">
+                  ${g.languages.map((lang) => `<span class="v2-mini-tag">${icons.globe} ${lang}</span>`).join('')}
+                  <span class="v2-mini-tag">${icons.shield} Cadastur (demo)</span>
+                </div>
+
+                <div class="v2-gg-footer">
+                  <div class="v2-card-price">
+                    <small>Privativo a partir de</small>
+                    <strong>R$ ${g.pricing.privateCompanionHour}/h</strong>
+                  </div>
+                  <div class="v2-gg-actions">
+                    <a href="#/guias/${g.id}" class="btn-outline">Ver perfil</a>
+                    <button type="button" class="btn-primary" data-v2-book-guide="${g.id}">Ver agenda ${icons.calendar}</button>
+                  </div>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="empty-state">
+            <h3>Nenhum guia encontrado com esses filtros</h3>
+            <p>Tente remover o filtro de especialidade ou destaque para ver todos os guias credenciados.</p>
+            <button type="button" class="btn-outline" id="v2ResetGuideFiltersBtn">Mostrar todos os guias</button>
+          </div>
+        `}
+      </div>
+    </main>
+    ${renderFooterV2(ctx)}
+  `;
+}
+
+// =========================================
+// TELA 05 — PERFIL DO GUIA (v2)
 // =========================================
 function renderGuideProfileV2(ctx, guideId) {
   const { state, icons } = ctx;
   const guide = GUIDES_V2[guideId] || GUIDES_V2['carlos-mendes'];
   state.selectedGuideId = guide.id;
   const route = getSelectedRouteV2(state);
-  const offeredRoutes = ROUTES_V2.filter((r) => r.guideId === guide.id);
-  const otherGuides = Object.values(GUIDES_V2).filter((g) => g.id !== guide.id);
+  const offeredRoutes = ROUTES_V2.filter((r) => (r.guideIds || [r.guideId]).includes(guide.id));
+  const otherGuides = Object.values(GUIDES_V2).filter((g) => g.id !== guide.id).slice(0, 3);
 
   return `
     ${renderHeaderV2(ctx, 'guides')}
     <main class="page-main">
       <div class="container">
         <div class="back-bar v2-back-flex">
-          <a href="#/roteiros/${route.slug}" class="back-link">${icons.chevronLeft} Voltar ao roteiro</a>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="#/guias" class="back-link">${icons.chevronLeft} Todos os guias credenciados</a>
+            <a href="#/roteiros/${route.slug}" class="back-link">Voltar ao roteiro</a>
+          </div>
           <div class="v2-guide-switcher">
-            <span>Outros guias demo:</span>
-            ${otherGuides.map((g) => `<a href="#/guias/${g.id}" class="v2-mini-link">${g.name}</a>`).join('')}
+            <span>Outros especialistas:</span>
+            ${otherGuides.map((g) => `<a href="#/guias/${g.id}" class="v2-mini-link">${g.name.split(' ')[0]}</a>`).join('')}
           </div>
         </div>
 
@@ -642,7 +796,7 @@ function renderGuideProfileV2(ctx, guideId) {
           <img src="${guide.avatar}" alt="${guide.name}" class="guide-avatar-lg" />
           <div class="guide-hero-info">
             <div class="v2-guide-badges">
-              <span class="eyebrow">Guia profissional (demo)</span>
+              ${renderGuideBadges(guide)}
               <button type="button" class="v2-cadastur-pill" id="v2CadasturToggle" aria-expanded="${state.v2.cadasturInfoOpen ? 'true' : 'false'}">
                 ${icons.shield} Cadastur demonstrativo <span class="v2-help-q">?</span>
               </button>
@@ -1386,16 +1540,16 @@ export function renderFlowViewV2(ctx) {
               <text class="fc-diamond-text" x="410" y="344" text-anchor="middle">Quer guia presencial?</text>
             </g>
 
-            <g class="fc-node" data-flow-open="#/guias/carlos-mendes">
+            <g class="fc-node" data-flow-open="#/guias">
               <rect x="260" y="416" width="300" height="62" rx="12" />
-              <text class="fc-node-num" x="410" y="435" text-anchor="middle">TELA 04 (v2)</text>
-              <text class="fc-node-title" x="410" y="453" text-anchor="middle">Perfil do guia credenciado</text>
-              <text class="fc-node-sub" x="410" y="467" text-anchor="middle">Tabela por modalidade, Cadastur e avaliações</text>
+              <text class="fc-node-num" x="410" y="435" text-anchor="middle">TELA 04 & 05 (v2)</text>
+              <text class="fc-node-title" x="410" y="453" text-anchor="middle">Galeria e Perfil do Guia</text>
+              <text class="fc-node-sub" x="410" y="467" text-anchor="middle">Top Guia, Parceiro GuiaSR, Cadastur e preços</text>
             </g>
 
             <g class="fc-node" data-flow-open="#/solicitacao/data">
               <rect x="260" y="510" width="300" height="62" rx="12" />
-              <text class="fc-node-num" x="410" y="529" text-anchor="middle">TELA 05 (v2)</text>
+              <text class="fc-node-num" x="410" y="529" text-anchor="middle">TELA 06 (v2)</text>
               <text class="fc-node-title" x="410" y="547" text-anchor="middle">Modalidade, data e encontro</text>
               <text class="fc-node-sub" x="410" y="561" text-anchor="middle">Privativo/Grupo, hotel/Portal, preço estimado</text>
             </g>
@@ -1442,6 +1596,7 @@ export function renderScreenV2(ctx, path) {
   if (path === '/' || path === '') return renderHomeV2(ctx);
   if (path === '/roteiros') return renderExploreV2(ctx);
   if (path.startsWith('/roteiros/')) return renderRouteDetailV2(ctx, path.replace('/roteiros/', ''));
+  if (path === '/guias') return renderGuidesGalleryV2(ctx);
   if (path.startsWith('/guias/')) return renderGuideProfileV2(ctx, path.replace('/guias/', ''));
   if (path === '/solicitacao/data') return renderDateSelectionV2(ctx);
   if (path === '/acesso') return renderAuthV2(ctx);
@@ -1474,6 +1629,47 @@ export function bindEventsV2(ctx) {
   document.getElementById('v2CadasturToggle')?.addEventListener('click', () => {
     state.v2.cadasturInfoOpen = !state.v2.cadasturInfoOpen;
     render();
+  });
+
+  // Seleção de guia na sidebar da Tela 03 (múltiplos guias por roteiro)
+  document.querySelectorAll('[data-v2-pick-guide]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.selectedGuideId = btn.getAttribute('data-v2-pick-guide');
+      render();
+    });
+  });
+
+  // Galeria de Guias Credenciados (#/guias)
+  document.getElementById('v2GuideSearchForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    state.v2.guideFilters.query = document.getElementById('v2GuideSearchInput').value;
+    render();
+  });
+
+  document.querySelectorAll('[data-v2-guide-badge]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.v2.guideFilters.badge = btn.getAttribute('data-v2-guide-badge');
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-v2-guide-spec]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.v2.guideFilters.specialty = btn.getAttribute('data-v2-guide-spec');
+      render();
+    });
+  });
+
+  document.getElementById('v2ResetGuideFiltersBtn')?.addEventListener('click', () => {
+    state.v2.guideFilters = { query: '', specialty: 'Todas', badge: 'all' };
+    render();
+  });
+
+  document.querySelectorAll('[data-v2-book-guide]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.selectedGuideId = btn.getAttribute('data-v2-book-guide');
+      navigate('#/solicitacao/data');
+    });
   });
 
   // Home search & shortcuts
